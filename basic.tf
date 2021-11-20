@@ -14,7 +14,7 @@ provider "azurerm" {
 
 #Creating a new Resource Group
 resource "azurerm_resource_group" "basicrg" {
-  name     = "${var.prefix}-basicrg"
+  name     = "${var.environment}-basicrg"
   location = "East US"
-  tags = var.tags
+  tags     = var.tags
 }

@@ -1,32 +1,32 @@
 #Creating Virtual Network
-resource "azurerm_virtual_network" "basicvnet" {
-  name                = "${var.prefix}-basicvnet"
+resource "azurerm_virtual_network" "vnet" {
+  name                = "${var.environment}-${var.vnet}"
   location            = azurerm_resource_group.basicrg.location
   resource_group_name = azurerm_resource_group.basicrg.name
-  address_space       = ["10.20.0.0/16"]
-  tags = var.tags
+  address_space       = var.vnet_add
+  tags                = var.tags
 }
 
 
 #Creating Subnets
 resource "azurerm_subnet" "bastion-subnet" {
-  name                 = "bastion-subnet"
+  name                 = "${var.environment}-${var.bstn-sub}"
   resource_group_name  = azurerm_resource_group.basicrg.name
-  virtual_network_name = azurerm_virtual_network.basicvnet.name
-  address_prefixes     = ["10.20.1.0/24"]
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = var.bstn_add
 }
 
 resource "azurerm_subnet" "web-subnet" {
-  name                 = "web-subnet"
+  name                 = "${var.environment}-${var.web-sub}"
   resource_group_name  = azurerm_resource_group.basicrg.name
-  virtual_network_name = azurerm_virtual_network.basicvnet.name
-  address_prefixes     = ["10.20.2.0/24"]
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = var.web_add
 }
 
-#created new subnet
+#created app subnet
 resource "azurerm_subnet" "app-subnet" {
-  name                 = "app-subnet"
+  name                 = "${var.environment}-${var.app-sub}"
   resource_group_name  = azurerm_resource_group.basicrg.name
-  virtual_network_name = azurerm_virtual_network.basicvnet.name
-  address_prefixes     = ["10.20.3.0/24"]
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = var.app_add
 }

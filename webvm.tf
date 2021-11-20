@@ -1,6 +1,6 @@
 #Creating Public IP for Web VNIC
 resource "azurerm_public_ip" "web-pip" {
-  name                = "web-pip"
+  name                = "${var.environment}-${var.web_pip}"
   resource_group_name = azurerm_resource_group.basicrg.name
   location            = azurerm_resource_group.basicrg.location
   allocation_method   = "Dynamic"
@@ -10,13 +10,13 @@ resource "azurerm_public_ip" "web-pip" {
 
 #Creating a Network Interface for Web VM
 resource "azurerm_network_interface" "web-nic" {
-  name                = "web-nic"
+  name                = "${var.environment}-${var.web_nic}"
   location            = azurerm_resource_group.basicrg.location
   resource_group_name = azurerm_resource_group.basicrg.name
-  tags = var.tags
+  tags                = var.tags
 
   ip_configuration {
-    name                          = "web-pip"
+    name                          = "${var.environment}-${var.web_pip}"
     subnet_id                     = azurerm_subnet.web-subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.web-pip.id
@@ -28,12 +28,12 @@ resource "azurerm_network_interface" "web-nic" {
 #Creating Web VM
 
 resource "azurerm_virtual_machine" "web-vm" {
-  name                  = "$(var.prefix)-web-vm"
+  name                  = "${var.environment}-${var.webvm_name}"
   location              = azurerm_resource_group.basicrg.location
   resource_group_name   = azurerm_resource_group.basicrg.name
   network_interface_ids = [azurerm_network_interface.web-nic.id]
   vm_size               = var.vm_size
-  tags = var.tags
+  tags                  = var.tags
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
   # delete_os_disk_on_termination = true
@@ -54,9 +54,9 @@ resource "azurerm_virtual_machine" "web-vm" {
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name  = "web-vm"
+    computer_name  = "${var.environment}-${var.webvm_name}"
     admin_username = var.username
-    admin_password = "P@ssw0rd@123"
+    admin_password = var.password
   }
   os_profile_linux_config {
     disable_password_authentication = false
